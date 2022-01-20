@@ -1,43 +1,11 @@
 // DoublyLinkedList.hpp
-//
-// ICS 46 Spring 2021
-// Project #2: Time Waits for No One
-//
-// DoublyLinkedList<ValueType> is a class template that implements a
-// doubly-linked list with head and tail pointers, including two kinds
-// of iterators: One of them allows viewing and modifying the list's
-// contents, while the other allows only viewing them.
-//
-// Your goal is to implement the entire public interface *exactly* as
-// specified below.  Do not modify the signatures of any of the public
-// member functions (including the public member functions of the various
-// iterator classes) in any way.  We will be running extensive unit
-// tests against your implementation, which will not compile unless
-// things remain completely unchanged.  As we did in Project #0, we've
-// provided you a basic set of unit tests that briefly demonstrate how
-// each of the member functions is required to behave; you'll find
-// those in the "gtest" directory.
-//
+// A Doubly Linked List template class.
 // All of the public member functions listed with "noexcept" in their
-// signature must be implemented in a way that they never throw exceptions.
-// All of the others are expected to make the "strong" exception guarantee,
-// which means two things: (1) no memory has leaked, and (2) the contents
+// signature never throw exceptions.
+// All of the others have no memory has leaked and the contents
 // of the list/iterator will not have visibly changed in the event that
 // an exception has been thrown.
-//
-// The entire C++ Standard Library is off-limits in your implementation
-// of this class.  DO NOT submit a version of this file (or any file
-// that it includes) that includes any C++ Standard Library headers.
-// (This includes things like adding a print() member function that
-// requires <iostream>.)
-//
-// As is good custom in class templates, keep the interface separate
-// from the implementation.  This means the bodies of member functions
-// should not be written in the class declaration, but should appear
-// below it.  I've placed "dummy" implementations of every public
-// member function, though, of course, most of them don't do the
-// right thing; but they will save you some typing and demonstrate
-// the structure of what you should be writing.
+
 
 #ifndef DOUBLYLINKEDLIST_HPP
 #define DOUBLYLINKEDLIST_HPP
@@ -53,11 +21,7 @@ class DoublyLinkedList
     // The forward declarations of these classes allows us to establish
     // that they exist, but delay displaying all of the details until
     // later in the file.
-    //
-    // (This is generally a good style, with the most important details
-    // appearing earlier in the class declaration.  That's the same
-    // reason why we're implementing the bodies of the member functions
-    // outside of the class declaration.)
+
 public:
     class Iterator;
     class ConstIterator;
@@ -140,31 +104,6 @@ public:
     unsigned int size() const noexcept;
 
 
-
-    // There are two kinds of iterators supported: Iterators and
-    // ConstIterators.  They have similar characteristics; they both
-    // allow you to see what values are in the list and move back and
-    // forth between them.  The difference is that ConstIterators allow
-    // you to see the elements but not modify them, while Iterators also
-    // support modification of the list (both by modifying the elements
-    // directly, and also by inserting or removing values at arbitrary
-    // locations).
-    //
-    // At any given time, an iterator refers to a value in the list.
-    // There are also two additional places it can refer: "past start"
-    // and "past end", which are the positions directly before the
-    // first value and directly after the last one, respectively.
-    // Except with respect to those boundaries, they can be moved
-    // both forward and backward.
-    //
-    // Note, too, that the reason we have a ConstIterator class instead
-    // of just saying "const Iterator" is because a "const Iterator"
-    // is something different: It's an Iterator object that you can't
-    // modify (i.e., you can't move it around).  What a ConstIterator
-    // holds constant isn't the iterator; it's the list that's protected
-    // by it.
-
-
     // iterator() creates a new Iterator over this list.  It will
     // initially be referring to the first value in the list, unless the
     // list is empty, in which case it will be considered both "past start"
@@ -218,8 +157,7 @@ public:
         bool isPastEnd() const noexcept;
     
     protected:
-        // You may want protected member variables and member functions,
-        // which will be accessible to the derived classes.
+        // Accessible to the derived classes.
         bool pastStart;
         bool pastEnd;
         unsigned int* itSize;
@@ -243,11 +181,6 @@ public:
         // referring to.  If the iterator is in the "past start" or
         // "past end" positions, an IteratorException will be thrown.
         const ValueType& value() const;
-
-    private:
-        // You may want private member variables and member functions.
-        // Node* currentNode;
-
     };
 
 
@@ -288,9 +221,6 @@ public:
         // "past start" or "past end" position, an IteratorException
         // is thrown.
         void remove(bool moveToNextAfterward = true);
-
-    private:
-        // You may want private member variables and member functions.
     };
 
 
@@ -308,12 +238,10 @@ private:
     };
 
 
-    // You can feel free to add private member variables and member
-    // functions here; there's a pretty good chance you'll need some.
     Node* head;
     Node* tail;
-    unsigned int sz;  // size of DLL
-    unsigned int* pSZ = &sz; // pointer to reference for use in IteratorBase and derived classes.
+    unsigned int sz;  // Size of DLL.
+    unsigned int* pSZ = &sz; // Pointer to reference for use in IteratorBase and derived classes.
 };
 
 
@@ -343,8 +271,8 @@ DoublyLinkedList<ValueType>::DoublyLinkedList(const DoublyLinkedList& list)
         
         Node* thisCurrentNode = head;  // Only do this once so head points to correct first created node.
 
-        // Set up for next possible node or nullptr if no more nodes to link
-        listCurrentNode = listCurrentNode->next;  // could be nullptr or filled Node
+        // Set up for next possible node or nullptr if no more nodes to link.
+        listCurrentNode = listCurrentNode->next;  // Could be nullptr or filled Node.
 
         // IF MORE THAN ONE NODE, LINK THE NODE TOGETHER BASED ON NODE COUNT/SIZE OF LIST (OTHER DLL).
         while(listCurrentNode != nullptr)
@@ -355,24 +283,24 @@ DoublyLinkedList<ValueType>::DoublyLinkedList(const DoublyLinkedList& list)
             thisCurrentNode = new Node
                                     {
                                         listCurrentNode->value,
-                                        thisPreviousNode, // link back
+                                        thisPreviousNode, // Link back.
                                         nullptr
                                     };
-            thisPreviousNode->next = thisCurrentNode; // link forward
+            thisPreviousNode->next = thisCurrentNode; // Link forward.
         
             tail = thisCurrentNode;
 
-            // // Could be another node of list OR nullptr which will break while loop
+            // Could be another node of list OR nullptr which will break while loop.
             listCurrentNode = listCurrentNode->next;
         }
-        // After exiting the while loop, the head should point to the first node and
+        // After exiting the while loop, the head should point to the first node.
 
         sz = list.sz;  
     }
     // Catch exception/error, deallocate memory (to avoid memory leak), then re-throw exception/error.
     catch(...)
     {
-        // Return to being empty with size = 0 and head/tail point to nullptr
+        // Return to being empty with size = 0 and head/tail point to nullptr.
         while (head != nullptr)
         {
             Node* tempNode = head;
@@ -392,15 +320,15 @@ template <typename ValueType>
 DoublyLinkedList<ValueType>::DoublyLinkedList(DoublyLinkedList&& list) noexcept
     : head{nullptr}, tail{nullptr}, sz{0}
 {
-    Node* thisHead = head; // stays pointing at original head
-    head = list.head; // make our head point to other List.head
-    list.head = thisHead;  // 
+    Node* thisHead = head; // Stays pointing at original head.
+    head = list.head; // Make our head point to other List.head.
+    list.head = thisHead; 
 
-    Node* thisTail = tail; // stays pointing at original head
+    Node* thisTail = tail; // Stays pointing at original head
     tail = list.tail;
     list.tail = thisTail;
 
-    // swaps size but since size is statically allocated here, no real need to swap
+    // Swaps size but since size is statically allocated here, no real need to swap.
     unsigned int tempSize;
     tempSize = sz;
     sz = list.sz;
@@ -419,10 +347,9 @@ DoublyLinkedList<ValueType>::~DoublyLinkedList() noexcept
     }
     // Ensure these member variables die.
     head = tail = nullptr;
-    //delete pSZ;
 }
 
-// assignment operator
+// Assignment operator
 template <typename ValueType>
 DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(const DoublyLinkedList& list)
 {
@@ -444,8 +371,8 @@ DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(const Doubly
             
             Node* thisCurrentNode = newHead;  // Only do this once so head points to correct first created node.
 
-            // Set up for next possible node or nullptr if no more nodes to link
-            listCurrentNode = listCurrentNode->next;  // could be nullptr or filled Node
+            // Set up for next possible node or nullptr if no more nodes to link.
+            listCurrentNode = listCurrentNode->next;  // Could be nullptr or filled Node.
 
             // IF MORE THAN ONE NODE, LINK THE NODE TOGETHER BASED ON NODE COUNT/SIZE OF LIST (OTHER DLL).
             while(listCurrentNode != nullptr)
@@ -456,18 +383,18 @@ DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(const Doubly
                 thisCurrentNode = new Node
                                         {
                                             listCurrentNode->value,
-                                            thisPreviousNode, // link back
+                                            thisPreviousNode, // Link back.
                                             nullptr
                                         };
-                thisPreviousNode->next = thisCurrentNode; // link forward
+                thisPreviousNode->next = thisCurrentNode; // Link forward.
             
                 newTail = thisCurrentNode;
 
-                // // Could be another node of list OR nullptr which will break while loop
+                // Could be another node of list OR nullptr which will break while loop.
                 listCurrentNode = listCurrentNode->next;
             }
 
-            // delete all current nodes from this DLL if any exist
+            // Delete all current nodes from this DLL if any exist.
             while (head != nullptr)
             {
                 Node* tempNode = head;
@@ -477,7 +404,7 @@ DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(const Doubly
 
             head = tail = nullptr;
 
-            // repoint head and tail to new DLL
+            // Repoint head and tail to new DLL.
             head = newHead;
             tail = newTail;
             // this size = list size
@@ -486,7 +413,7 @@ DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(const Doubly
         // Catch exception/error, deallocate memory (to avoid memory leak), then re-throw exception/error.
         catch(...)
         {
-            // original head, tail, size stay intact
+            // Original head, tail, size stays intact.
             while (newHead != nullptr)
             {
                 Node* tempNode = newHead;
@@ -499,24 +426,24 @@ DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(const Doubly
     return *this;
 }
 
-// move assigntment operator
+// Move assigntment operator.
 template <typename ValueType>
 DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(DoublyLinkedList&& list) noexcept
 {
     if (this != &list)
     {
-        // Doesn't matter if other list is empty or not since ALL private member vars should be switched anyways
+        // Doesn't matter if other list is empty or not since ALL private member vars should be switched anyways.
         Node* tempNode = nullptr;
 
-        tempNode = head; // stays pointing at original head
+        tempNode = head; // Stays pointing at original head.
         head = list.head;
         list.head = tempNode;
 
-        tempNode = tail; // stays pointing at original head
+        tempNode = tail; // Stays pointing at original head.
         tail = list.tail;
         list.tail = tempNode;
 
-        // swaps size
+        // Swaps size.
         unsigned int tempSize;
         tempSize = sz;
         sz = list.sz;
@@ -526,7 +453,7 @@ DoublyLinkedList<ValueType>& DoublyLinkedList<ValueType>::operator=(DoublyLinked
 }
 
 
-// Adds node to the front with a particular value and repoints head
+// Adds node to the front with a particular value and repoints head.
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::addToStart(const ValueType& value)
 {
@@ -543,7 +470,7 @@ void DoublyLinkedList<ValueType>::addToStart(const ValueType& value)
     {
         try
         {
-            // can anything go wrong here in this try??
+            // Can anything go wrong here in this try?  If it does, catch it and no memory is leaked.
             Node* tempNode = head;
             head->prev = newNode;
             head = newNode;
@@ -552,7 +479,7 @@ void DoublyLinkedList<ValueType>::addToStart(const ValueType& value)
             head->prev = nullptr;
             head->next = tempNode;
 
-            sz++;  // if the try has gotten this far, size will not throw an exception.
+            sz++;  // If the try has gotten this far, size will not throw an exception.
         }
         catch(...)
         {
@@ -566,7 +493,7 @@ void DoublyLinkedList<ValueType>::addToStart(const ValueType& value)
     }
 }
 
-// Adds node to the back with a particular value and repoints tail
+// Adds node to the back with a particular value and repoints tail.
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::addToEnd(const ValueType& value)
 {
@@ -627,12 +554,10 @@ void DoublyLinkedList<ValueType>::removeFromStart()
 }
 
 
-// Remove node from end of the DLL and repoint tail
+// Remove node from end of the DLL and repoint tail.
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::removeFromEnd()
 {
-    // don't need a try and catch here????
-
     if (sz == 0)
     {
         throw EmptyException{};
@@ -653,7 +578,7 @@ void DoublyLinkedList<ValueType>::removeFromEnd()
 }
 
 
-// Returns the value of the head (first node) that CANNOT change or be modified
+// Returns the value of the head (first node) that CANNOT change or be modified.
 template <typename ValueType>
 const ValueType& DoublyLinkedList<ValueType>::first() const
 {
@@ -667,7 +592,7 @@ const ValueType& DoublyLinkedList<ValueType>::first() const
     } 
 }
 
-// Returns the value of the head (first node) that CAN change or be modified
+// Returns the value of the head (first node) that CAN change or be modified.
 template <typename ValueType>
 ValueType& DoublyLinkedList<ValueType>::first()
 {
@@ -682,7 +607,7 @@ ValueType& DoublyLinkedList<ValueType>::first()
 }
 
 
-// Returns the value of the last (last node) that CANNOT change or be modified
+// Returns the value of the last (last node) that CANNOT change or be modified.
 template <typename ValueType>
 const ValueType& DoublyLinkedList<ValueType>::last() const
 {
@@ -697,7 +622,7 @@ const ValueType& DoublyLinkedList<ValueType>::last() const
 }
 
 
-// Returns the value of the last (last node) that CAN change or be modified
+// Returns the value of the last (last node) that CAN change or be modified.
 template <typename ValueType>
 ValueType& DoublyLinkedList<ValueType>::last()
 {
@@ -711,7 +636,7 @@ ValueType& DoublyLinkedList<ValueType>::last()
     } 
 }
 
-// Returns the size of the DLL that is modified in the DLL class and IteratorBase with its derived iterator classes
+// Returns the size of the DLL that is modified in the DLL class and IteratorBase with its derived iterator classes.
 template <typename ValueType>
 unsigned int DoublyLinkedList<ValueType>::size() const noexcept
 {
@@ -719,7 +644,7 @@ unsigned int DoublyLinkedList<ValueType>::size() const noexcept
 }
 
 
-// Returns true of list is empty, false if not empty
+// Returns true of list is empty, false if not empty.
 template <typename ValueType>
 bool DoublyLinkedList<ValueType>::isEmpty() const noexcept
 {
@@ -734,12 +659,12 @@ bool DoublyLinkedList<ValueType>::isEmpty() const noexcept
 }
 
 
-
+//
 // Iterator member functions //
+//
 
 
-
-// Construct modifiable iterator
+// Construct modifiable iterator.
 template <typename ValueType>
 typename DoublyLinkedList<ValueType>::Iterator DoublyLinkedList<ValueType>::iterator()
 {
@@ -747,7 +672,7 @@ typename DoublyLinkedList<ValueType>::Iterator DoublyLinkedList<ValueType>::iter
 }
 
 
-// Construct constant iterator
+// Construct constant iterator.
 template <typename ValueType>
 typename DoublyLinkedList<ValueType>::ConstIterator DoublyLinkedList<ValueType>::constIterator() const
 {
@@ -755,7 +680,7 @@ typename DoublyLinkedList<ValueType>::ConstIterator DoublyLinkedList<ValueType>:
 }
 
 
-// Class that Iterator and ConstIterator derives from using the DLL
+// Class that Iterator and ConstIterator derives from using the DLL.
 template <typename ValueType>
 DoublyLinkedList<ValueType>::IteratorBase::IteratorBase(const DoublyLinkedList& list) noexcept
 {
@@ -763,7 +688,7 @@ DoublyLinkedList<ValueType>::IteratorBase::IteratorBase(const DoublyLinkedList& 
     itTail = list.tail;
     itSize = list.pSZ;
 
-    // if list is empty
+    // If list is empty.
     if (itHead == nullptr && itTail == nullptr)
     {
         itSize = 0;
@@ -771,8 +696,8 @@ DoublyLinkedList<ValueType>::IteratorBase::IteratorBase(const DoublyLinkedList& 
         pastStart = true;
         pastEnd = true;
     }
-    // if list is NOT empty
-    else // itHead will refer to the first value in the list;
+    // If list is NOT empty.
+    else // itHead will refer to the first value in the list.
     {
         pastStart = false;
         pastEnd = false;
@@ -782,16 +707,16 @@ DoublyLinkedList<ValueType>::IteratorBase::IteratorBase(const DoublyLinkedList& 
 }
 
 
-// Current position moves to next node towards tail
+// Current position moves to next node towards tail.
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::IteratorBase::moveToNext()
 {
-    // if current position is nullptr after tail
-    if (currentNode == nullptr && pastStart == false && pastEnd == true) // currentNode is pastStart
+    // If current position is nullptr after tail.
+    if (currentNode == nullptr && pastStart == false && pastEnd == true) // CurrentNode is pastStart.
     {
         throw IteratorException{};
     }
-    // if current position is nullptr before head, move to head
+    // If current position is nullptr before head, move to head.
     else if (currentNode == nullptr && pastStart == true && pastEnd == false)
     {
         currentNode = itHead;
@@ -799,7 +724,7 @@ void DoublyLinkedList<ValueType>::IteratorBase::moveToNext()
         pastStart = false;
         pastEnd = false;
     }
-    // if current position is node before tail, set to tail
+    // If current position is node before tail, set to tail.
     else if (currentNode->next == itTail)
     {
         currentNode = itTail;
@@ -807,12 +732,12 @@ void DoublyLinkedList<ValueType>::IteratorBase::moveToNext()
         pastStart = false;
         pastEnd = false;
     }
-    // current position from head to tail - 1
+    // Current position from head to tail - 1
     else
     {
         currentNode = currentNode->next;
 
-        // if current position IS the tail, it is now nullptr and pastEnd
+        // If current position IS the tail, it is now nullptr and pastEnd.
         if (currentNode == nullptr)
         {
             pastStart = false;
@@ -822,16 +747,16 @@ void DoublyLinkedList<ValueType>::IteratorBase::moveToNext()
 }
 
 
-// Current position moves to next node towards head
+// Current position moves to next node towards head.
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::IteratorBase::moveToPrevious()
 {
-    // if current position is nullptr before head
-    if (currentNode == nullptr && pastStart == true && pastEnd == false) // currentNode is pastStart
+    // If current position is nullptr before head.
+    if (currentNode == nullptr && pastStart == true && pastEnd == false) // CurrentNode is pastStart.
     {
         throw IteratorException{};
     }
-    // if current position is nullptr after tail, move to tail
+    // If current position is nullptr after tail, move to tail.
     else if (currentNode == nullptr && pastStart == false && pastEnd == true)
     {
         currentNode = itTail;
@@ -839,7 +764,7 @@ void DoublyLinkedList<ValueType>::IteratorBase::moveToPrevious()
         pastStart = false;
         pastEnd = false;
     }
-    // if current position is node BEFORE head, set head to this node
+    // If current position is node BEFORE head, set head to this node.
     else if (currentNode->prev == itHead)
     {
         currentNode = itHead;
@@ -847,12 +772,12 @@ void DoublyLinkedList<ValueType>::IteratorBase::moveToPrevious()
         pastStart = false;
         pastEnd = false;
     }
-    // current position from head + 1 to tail
+    // Current position from head + 1 to tail.
     else
     {
         currentNode = currentNode->prev;
 
-        // if current position IS the head, it is now nullptr and pastStart
+        // If current position IS the head, it is now nullptr and pastStart.
         if (currentNode == nullptr)
         {
             pastStart = true;
@@ -878,7 +803,7 @@ bool DoublyLinkedList<ValueType>::IteratorBase::isPastEnd() const noexcept
 }
 
 
-// ConstIterator constructor taking in the DLL
+// ConstIterator constructor taking in the DLL.
 template <typename ValueType>
 DoublyLinkedList<ValueType>::ConstIterator::ConstIterator(const DoublyLinkedList& list) noexcept
     : IteratorBase{list}
@@ -886,7 +811,7 @@ DoublyLinkedList<ValueType>::ConstIterator::ConstIterator(const DoublyLinkedList
 }
 
 
-// Returns the value of the current position in the ConstIterator
+// Returns the value of the current position in the ConstIterator.
 template <typename ValueType>
 const ValueType& DoublyLinkedList<ValueType>::ConstIterator::value() const
 {
@@ -901,7 +826,7 @@ const ValueType& DoublyLinkedList<ValueType>::ConstIterator::value() const
 }
 
 
-// Iterator constructor taking in the DLL
+// Iterator constructor taking in the DLL.
 template <typename ValueType>
 DoublyLinkedList<ValueType>::Iterator::Iterator(DoublyLinkedList& list) noexcept
     : IteratorBase{list}
@@ -909,7 +834,7 @@ DoublyLinkedList<ValueType>::Iterator::Iterator(DoublyLinkedList& list) noexcept
 }
 
 
-// Returns the value of the current position of Iterator
+// Returns the value of the current position of Iterator.
 template <typename ValueType>
 ValueType& DoublyLinkedList<ValueType>::Iterator::value() const
 {
@@ -924,36 +849,36 @@ ValueType& DoublyLinkedList<ValueType>::Iterator::value() const
 }
 
 
-// Inserts new node before current position
-// Increases size of DLL by 1
-// DOES NOT move current position / currentNode 
+// Inserts new node before current position.
+// Increases size of DLL by 1.
+// DOES NOT move current position / currentNode .
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::Iterator::insertBefore(const ValueType& value)
 {
-    // if current position is nullptr before head
+    // If current position is nullptr before head.
     if (this->pastStart == true && this->currentNode == nullptr)
     {
         throw IteratorException{};
     }
-    // if current position IS head
+    // If current position IS head.
     else if (this->currentNode == this->itHead)
     {
         Node* insertedNode = new Node{value, nullptr, this->itHead};
         this->itHead->prev = insertedNode;
 
-        // repoint head to insertedNode
+        // Repoint head to insertedNode.
         this->itHead = insertedNode;
     }
-    // if current position is nullptr after tail
+    // If current position is nullptr after tail.
     else if (this->pastEnd == true && this->currentNode == nullptr)
     {
         Node* insertedNode = new Node{value, this->itTail, nullptr};
         this->itTail->next = insertedNode;
 
-        // repoint tail to insertedNode
+        // Repoint tail to insertedNode.
         this->itTail = insertedNode;
 
-        // pastEnd remains true
+        // PastEnd remains true.
     }
     else
     {
@@ -968,24 +893,24 @@ void DoublyLinkedList<ValueType>::Iterator::insertBefore(const ValueType& value)
 }
 
 
-// Inserts new node after current position
-// Increases size of DLL by 1
-// DOES NOT move current position / currentNode 
+// Inserts new node after current position.
+// Increases size of DLL by 1.
+// DOES NOT move current position / currentNode.
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::Iterator::insertAfter(const ValueType& value)
 {
-    // if current position is nullptr after tail
+    // If current position is nullptr after tail.
     if (this->pastEnd == true && this->currentNode == nullptr)
     {
         throw IteratorException{};
     }
-    // if current position IS tail, insertedNode becomes new tail
+    // If current position IS tail, insertedNode becomes new tail.
     else if (this->currentNode == this->itTail && this->pastEnd == false)
     {
         Node* insertedNode = new Node{value, this->itTail, nullptr};
         this->itTail->next = insertedNode;
 
-        // repoint tail to insertedNode
+        // Repoint tail to insertedNode.
         this->itTail = insertedNode;
 
         // // No longer necessary since size counts the nodes when
@@ -993,16 +918,16 @@ void DoublyLinkedList<ValueType>::Iterator::insertAfter(const ValueType& value)
         // //update size
         // itSize++;
     }
-    // if current position is nullptr before head
+    // If current position is nullptr before head.
     else if (this->pastStart == true && this->currentNode == nullptr)
     {
         Node* insertedNode = new Node{value, nullptr, this->itHead};
         this->itHead->prev = insertedNode;
 
-        // repoint tail to insertedNode
+        // Repoint tail to insertedNode.
         this->itHead = insertedNode;
 
-        // pastStart remains true
+        // PastStart remains true.
     }
     else
     {
@@ -1012,16 +937,13 @@ void DoublyLinkedList<ValueType>::Iterator::insertAfter(const ValueType& value)
         nodeAfterInsert->prev = insertedNode;
 
         this->currentNode->next = insertedNode;
-
-        // use try and catch method???
-        // delete insertedNode;
     }
     this->itSize++;
 }
 
 
 // Removes a node and redetermines/updates head and tail pointers if neccesary.
-// Decrease size of DLL by -1
+// Decrease size of DLL by -1.
 // Possible for currentNode to enter the pastStart or pastEnd position (aka nullptr).
 template <typename ValueType>
 void DoublyLinkedList<ValueType>::Iterator::remove(bool moveToNextAfterward)
@@ -1030,38 +952,38 @@ void DoublyLinkedList<ValueType>::Iterator::remove(bool moveToNextAfterward)
     {
         throw IteratorException{};
     }
-    else if (moveToNextAfterward == true) // so move after
+    else if (moveToNextAfterward == true) // So move after.
     {
         if (this->currentNode == this->itHead)
         {
-            Node* tempNode = this->currentNode; // Point to original head position to delete later
-            this->currentNode = this->currentNode->next; // Repoint to node after head
-            this->currentNode->prev = nullptr; // Update for prev to point at pastStart / nullptr
-            this->itHead = this->currentNode; // Repoint to "new" head node
+            Node* tempNode = this->currentNode; // Point to original head position to delete later.
+            this->currentNode = this->currentNode->next; // Repoint to node after head.
+            this->currentNode->prev = nullptr; // Update for prev to point at pastStart / nullptr.
+            this->itHead = this->currentNode; // Repoint to "new" head node.
 
-            delete tempNode; // Delete the original head   
+            delete tempNode; // Delete the original head   .
         }
-        else if (this->currentNode == this->itTail) // will delete tail node and point to nullptr
+        else if (this->currentNode == this->itTail) // Will delete tail node and point to nullptr.
         {
-            this->currentNode = this->currentNode->prev; // go backwards to delete current / tail node
-            delete this->currentNode->next; // delete original tail node
-            this->itTail = this->currentNode; // tail now refers to "new" tail
-            this->currentNode->next = nullptr; // update the next pointer of new tail node
-            this->currentNode = nullptr; // current position is now pastEnd / correct position
+            this->currentNode = this->currentNode->prev; // Go backwards to delete current / tail node.
+            delete this->currentNode->next; // Delete original tail node.
+            this->itTail = this->currentNode; // Tail now refers to "new" tail.
+            this->currentNode->next = nullptr; // Update the next pointer of new tail node.
+            this->currentNode = nullptr; // Current position is now pastEnd / correct position.
             
-            this->pastEnd = true; // Update pastEnd to true because currentNode now points to nullptr after tail
+            this->pastEnd = true; // Update pastEnd to true because currentNode now points to nullptr after tail.
         }
         // node is right before tail
         else if (this->currentNode->next == this->itTail) 
         {
-            this->currentNode = this->currentNode->prev; // go backwards to delete current
-            delete this->currentNode->next; // delete original tail node
-            this->currentNode->next = this->itTail;  // Tail should still have same value and same next (nullptr)
+            this->currentNode = this->currentNode->prev; // Go backwards to delete current.
+            delete this->currentNode->next; // Delete original tail node.
+            this->currentNode->next = this->itTail;  // Tail should still have same value and same next (nullptr).
             this->itTail->prev = this->currentNode;
 
             this->currentNode = this->itTail;  
         }
-        // if currentNode is the last node in the DLL
+        // If currentNode is the last node in the DLL.
         else if (this->currentNode->prev == nullptr && this->currentNode->next == nullptr)
         {
             delete this->currentNode;
@@ -1071,7 +993,7 @@ void DoublyLinkedList<ValueType>::Iterator::remove(bool moveToNextAfterward)
 
             //update size?
         }
-        else // remove a body node if size > 1 since size == 1 is taken care of
+        else // Remove a body node if size > 1 since size == 1 is taken care of.
         {
             Node* nodeBefore = this->currentNode->prev;
             Node* nodeAfter = this->currentNode->next;
@@ -1083,29 +1005,29 @@ void DoublyLinkedList<ValueType>::Iterator::remove(bool moveToNextAfterward)
             this->currentNode = nodeAfter;
         }
     }
-    else if (moveToNextAfterward == false) // so move before
+    else if (moveToNextAfterward == false) // So move before.
     {
         if (this->currentNode == this->itHead)
         {
             this->currentNode = this->currentNode->next; 
-            delete this->currentNode->prev; // same as delete itHead;
-            this->currentNode->prev = nullptr; // prev now points to nullptr
-            this->currentNode = this->currentNode->prev; // same as nullptr
-            this->itHead = this->currentNode; // Repoint head node
+            delete this->currentNode->prev; // Same as delete itHead.
+            this->currentNode->prev = nullptr; // prev now points to nullptr.
+            this->currentNode = this->currentNode->prev; // Same as nullptr.
+            this->itHead = this->currentNode; // Repoint head node.
 
             this->pastStart = true;
             this->pastEnd = false;
         }
-        else if (this->currentNode == this->itTail) // will delete tail node and point to node before original tail
+        else if (this->currentNode == this->itTail) // Will delete tail node and point to node before original tail.
         {
-            this->currentNode = this->currentNode->prev; // go backwards to delete current / tail node
-            delete this->currentNode->next; // delete original tail node
+            this->currentNode = this->currentNode->prev; // Go backwards to delete current / tail node.
+            delete this->currentNode->next; // Delete original tail node.
             this->currentNode->next = nullptr; 
-            this->itTail = this->currentNode; // tail now refers to "new" tail
+            this->itTail = this->currentNode; // Tail now refers to "new" tail.
             
-            this->pastEnd = false; // Update pastEnd to true because currentNode now points to nullptr after tail
+            this->pastEnd = false; // Update pastEnd to true because currentNode now points to nullptr after tail.
         }
-        // node is right before head
+        // Node is right before head.
         else if (this->currentNode->prev == this->itHead) 
         {
             this->currentNode = this->currentNode->next; 
@@ -1115,7 +1037,7 @@ void DoublyLinkedList<ValueType>::Iterator::remove(bool moveToNextAfterward)
 
             this->currentNode = this->itHead; 
         }
-        // if currentNode is the last node in the DLL
+        // If currentNode is the last node in the DLL.
         else if (this->currentNode->prev == nullptr && this->currentNode->next == nullptr)
         {
             delete this->currentNode;
@@ -1123,7 +1045,7 @@ void DoublyLinkedList<ValueType>::Iterator::remove(bool moveToNextAfterward)
             this->pastStart = true;
             this->pastEnd = true;
         }
-        else // remove a body node if size > 1 since size == 1 is taken care of
+        else // Remove a body node if size > 1 since size == 1 is taken care of.
         {
             Node* nodeBefore = this->currentNode->prev;
             Node* nodeAfter = this->currentNode->next;
